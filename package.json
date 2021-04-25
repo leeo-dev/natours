@@ -1,0 +1,12 @@
+{
+  "name": "Natours",
+  "version": "1.0.0",
+  "description": "Leraning NodeJs Express and MogoDb",
+  "main": "app.js",
+  "repository": "https://github.com/leeodesign/natours",
+  "author": "Leonardo Albuquerque",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
