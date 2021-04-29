@@ -1,5 +1,5 @@
 {
-  "name": "Natours",
+  "name": "natours",
   "version": "1.0.0",
   "description": "Learning NodeJs Express and MongoDb",
   "main": "app.js",

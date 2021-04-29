@@ -1,6 +1,26 @@
 const fileSystem = require("fs");
 const tours = JSON.parse(fileSystem.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
+exports.checkId = (request, response, next, value )=>{
+      const id = +value;
+    if(id > tours.length){
+      return response.status(404).json({status: "failed", message: "Missing some information"});
+    }
+
+  next();
+}
+
+exports.checkBody = (request, response, next)=>{
+  const tour = request.body;
+  for(const property in tour){
+    if(tour[property] == ""){
+      return response.status(400).json({status: "fail", message: "faltando informações"})
+    }
+  }
+  
+  next();
+}
+
 exports.allTours = (request, response)=>{
   console.log(request.requestTime);
   response.status(200).json({status: 'success', requestAt: request.requestTime, result: tours.length , data: {tours}});
@@ -9,11 +29,7 @@ exports.allTours = (request, response)=>{
 exports.singleTour = (request, response)=>{
   const id = +request.params.id;
   const tour = tours.find(element => element.id === id);
-  if(!tour){
-    return response.status(404).json({status: 'fail', message: "Invalid id"});
-  }else{
   response.status(200).json({status: 'success', result: 1, data: {tour}});
-  }
 };
 
 exports.createTour = (request, response)=>{
@@ -40,10 +56,5 @@ exports.updateTour = (request, response)=>{
 };
 
 exports.deleteTour = (request, response)=>{
-  const id = +request.params.id;
-  if(id > tours.length){
-    response.status(404).json({status: "failed", message: "Id not found!"});
-  }else{
     response.status(204).json({status: "success", data: null});
-  }
 };
