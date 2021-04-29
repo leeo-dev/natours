@@ -4,9 +4,11 @@ const toursRouter = require("./routes/toursRoutes");
 const usersRouter = require("./routes/usersRoutes");
 
 const app = express();
+if(process.env.NODE_ENV === 'development'){
+app.use(morgan('dev'));
+}
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
-app.use(morgan('dev'));
 app.use((request, response, next)=>{
   request.requestTime = new Date().toISOString();
   next();
