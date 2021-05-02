@@ -1,17 +1,5 @@
-
 const Tour = require(`${__dirname}/../models/tourModel`);
 // const tours = JSON.parse(fileSystem.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
-
-exports.checkBody = (request, response, next)=>{
-  // const tour = request.body;
-  // for(const property in tour){
-  //   if(tour[property] == ""){
-  //     return response.status(400).json({status: "fail", message: "faltando informações"})
-  //   }
-  // }
-  
-  next();
-}
 
 exports.allTours = async (request, response)=>{
   const tours = await Tour.find();
@@ -36,7 +24,19 @@ exports.singleTour = async (request, response)=>{
   }
 };
 
-exports.createTour = (request, response)=>{
+exports.createTour = async (request, response)=>{
+  try{
+    const tourBody = request.body;
+    const newTour = await Tour.create(tourBody);
+    response.status(200).json({status: 'success', data: {newTour}});
+  }catch(err){
+    console.log(err);
+    response.status(404).json({
+      status: "fail",
+      message: err
+    });
+  }
+
   // const id = tours.length;
   // const newTour = Object.assign({id}, request.body);
   // tours.push(newTour);
