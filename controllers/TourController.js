@@ -1,9 +1,23 @@
+const { query } = require("express");
+
 const Tour = require(`${__dirname}/../models/tourModel`);
 // const tours = JSON.parse(fileSystem.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`));
 
 exports.allTours = async (request, response)=>{
-  const tours = await Tour.find();
   try{
+    //Build Query
+    // 01 - Filtering
+    const queryObject = {...request.query};
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach((element)=> delete queryObject[element]);
+
+    //Advanced Filtering
+    let queryString = JSON.stringify(queryObject);
+    queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+    const query = Tour.find(JSON.parse(queryString)); 
+    
+    //Execute Query
+    const tours = await query; 
     response.status(200).json({status: 'success', result: tours.length , data: {tours}});
   }catch(err){
     console.log(err);
