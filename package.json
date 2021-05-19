@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Learning NodeJs Express and MongoDb",
   "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "debug": "ndb server.js"
+  },
   "repository": "https://github.com/leeodesign/natours",
   "author": "Leonardo Albuquerque",
   "license": "MIT",
