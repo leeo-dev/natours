@@ -20,7 +20,12 @@ const handleValidationErrorDB = err => {
 };
 
 const sendErrorDev = (err, res) => {
-console.log(err);
+  res.status(err.statusCode).json({
+    status: err.status,
+    error: err,
+    message: err.message,
+    stack: err.stack
+  });
 };
 
 const sendErrorProd = (err, res) => {
