@@ -17,7 +17,7 @@ app.use((request, response, next)=>{
 });
 
 app.use("/api/v1/users", usersRouter);  
-app.use("/api/v1/tours", toursRouter);  
+app.use("/api/v1/tours", toursRouter);
 
 app.all('*', (request, response, next)=>{
   // response.status(404).json({
