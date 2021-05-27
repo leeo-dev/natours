@@ -15,12 +15,15 @@ const signToken = (idUser) =>{
     )
 }
 
+const createSendToken = (user, statusCode, response) =>{
+  const token = signToken(user._id);
+  response.status(statusCode).json({status: 'success', token, data: {user}})
+}
+
 exports.signup = catchAsync(async(request, response, next)=>{
   const {name, email, password, passwordConfirm, role} = request.body
   const newUser = await User.create({name, email, password, passwordConfirm, role});
-  const token = signToken(newUser._id);
-  response.status(201).json({status: 'success', token, data: {user: newUser}});
-  next();
+  createSendToken(newUser, 201, response);
 });
 
 exports.login = catchAsync( async (request, response, next) =>{
@@ -34,9 +37,7 @@ exports.login = catchAsync( async (request, response, next) =>{
   if(!user || !isCorrectPassword){
     return next(new appError('Incorrect e-mail or password', 401));
   }
-  const token = signToken(user._id);
-  response.status(200).json({status: 'success', token});
-  next();
+  createSendToken(user, 200, response);
 });
 
 exports.protect = catchAsync(async (request, response, next)=>{
@@ -120,14 +121,21 @@ exports.resetPassword = catchAsync( async (request, response, next) => {
   // 3) Update changedPassword property for the current user
   await user.save();
   // 4) Log the user in, send JWT
-  const token = signToken(user._id);
-  response.status(200).json({status: 'success', token});
+  createSendToken(user, 200, response);
 
 });
 
-exports.updatePassword =(request, response, next)=>{
+exports.updatePassword = catchAsync( async (request, response, next)=>{
   // 1) Get user from collection
+  const user = await User.findById(request.user.id).select('+password');
   // 2) Check if POSTed password is correct
+  if(!(await user.correctPassword(request.body.passwordCurrent, user.password))){
+    return next(new appError('Your current password is wrong!', 401));
+  }
   // 3) If the password is correct then update the password
+  user.password = request.body.password;
+  user.passwordConfirm = request.body.password;
+  await user.save();
   // 4) Log user in, send JWT
-}
+  createSendToken(user, 200, response);
+});
